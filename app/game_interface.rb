@@ -1,17 +1,17 @@
+$longest_line = nil
+
 def welcome
   guess_from = generate_ascii("Guess  From")
-  longest_line = longest_line = guess_from.split("\n").max_by(&:size).size
+  $longest_line = $longest_line = guess_from.split("\n").max_by(&:size).size
   puts guess_from
-  generate_ascii("Lyrics").split("\n").each { |line| puts line.center(longest_line) }
+  generate_ascii("Lyrics").split("\n").each { |line| puts line.center($longest_line) }
 end
 
 def menu
-  puts "
-                  1 - New Game
-                  2 - Leaderboard
-                  3 - Player History
-                  0 - Exit Game
-      "
+  puts "\n"
+  menu = ["New Game", "Leaderboard", "Player History"]
+  menu.each { |menu_item| puts "".ljust($longest_line / 3) + "#{menu.index(menu_item) + 1} - #{menu_item}".ljust($longest_line / 3) }
+  puts "".ljust($longest_line / 3) + "0 - Exit Game"
   get_menu_input()
 end
 
