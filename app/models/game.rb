@@ -2,14 +2,20 @@ class Game < ActiveRecord::Base
   has_many :game_records
   belongs_to :player
 
-  def create_question_set(question_ct)
+  def self.create_question_set(question_ct)
     questions = []
     question_ct.times { questions << generate_question }
     questions
   end
 
-  def generate_question
-    question = {song_id: nil, guessing_lyric: nil, correct_answer: nil, incorrect_answers: [], display_answers: []}
+  def self.generate_question
+    question = {
+      song_id: nil,
+      guessing_lyric: nil,
+      correct_answer: nil,
+      incorrect_answers: [],
+      display_answers: [],
+    }
 
     song = Song.all.sample
     question[:song_id] = song[:id]
@@ -47,11 +53,11 @@ class Game < ActiveRecord::Base
 
     question_set.each do |question|
       display_question(question)
-      response = STDIN.gets.chomp.to_i
+      response = gets.chomp.to_i
       loop do
         if !([1, 2, 3, 4].include? response)
           puts "Please give an answer between 1 and 4."
-          response = STDIN.gets.chomp.to_i
+          response = gets.chomp.to_i
         else
           break
         end
@@ -66,7 +72,8 @@ class Game < ActiveRecord::Base
   end
 
   def display_question(question)
-    puts "\nWho sang these lyrics?\n\n#{question[:guessing_lyric]}\n\n"
+    puts "\nWho sang these lyrics?".center(80)
+    puts "\n#{question[:guessing_lyric]}\n\n".center(80)
     question[:display_answers].each_with_index { |answer, i| puts "#{i + 1}. #{answer}" }
   end
 
@@ -100,6 +107,7 @@ class Game < ActiveRecord::Base
   end
 
   def self.display_leaderboard
+    system("clear")
     generate_ascii("Top 10").split("\n").each { |line| puts line.center(60) }
     total_scores = Player.all.each_with_object({}) do |player, ttl_score|
       ttl_score[player.name] = player.game_records.sum("points")

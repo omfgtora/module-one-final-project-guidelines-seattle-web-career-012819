@@ -9,7 +9,13 @@ require_relative "../config/environment"
 # exec("ruby ../db/seeds.rb") if Song.none?
 require_relative "../db/seeds.rb" if Song.none?
 
-GameInterface.welcome
+welcome
+menu
 loop do
-  GameInterface.menu
+  puts "-" * 80
+  puts "Press enter to return to main menu"
+  gets.chomp
+  system("clear")
+  welcome
+  menu
 end
