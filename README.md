@@ -9,7 +9,7 @@ To get started playing, first clone this repository, bundle install dependencies
 ## Installation
 #### OSX/Linux
 ```
-git clone git@github.com:Shaundra/mod-1-final-project.git
+git clone git@github.com:omfgtora/module-one-final-project-guidelines-seattle-web-career-012819.git
 cd mod-1-final-project
 bundle install
 rake run
