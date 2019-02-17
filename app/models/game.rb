@@ -21,13 +21,13 @@ class Game < ActiveRecord::Base
     lyrics_array[random_index..(random_index + 1)]
   end
 
-  def self.create_question_set(question_ct)
+  def create_question_set(question_ct)
     questions = []
     question_ct.times { questions << generate_question }
     questions
   end
 
-  def self.generate_question
+  def generate_question
     question = {
       song_id: nil,
       guessing_lyric: nil,

@@ -15,13 +15,6 @@ def menu
   get_menu_input()
 end
 
-def thank_you_for_playing
-  system("clear")
-  puts generate_ascii("Thank you")
-  puts generate_ascii("for playing.")
-  ""
-end
-
 def get_menu_input(arg = nil)
   if arg == "try again"
     puts "Please input a command"
@@ -43,7 +36,15 @@ def get_menu_input(arg = nil)
   end
 end
 
+def thank_you_for_playing
+  system("clear")
+  puts generate_ascii("Thank you")
+  puts generate_ascii("for playing.")
+  ""
+end
+
 def play_game(current_player)
+  system("clear")
   new_game = Game.create
   new_game.player = current_player
   new_game.save
@@ -65,9 +66,12 @@ def continue(current_player)
     input = gets.chomp.downcase
 
     if input == "y"
+      system("clear")
       play_game(current_player)
     else
-      break
+      system("clear")
+      welcome
+      menu
     end
   end
 end
