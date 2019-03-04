@@ -3,12 +3,7 @@ class Game < ActiveRecord::Base
   belongs_to :player
 
   def choose_random_artist(song)
-    rand_artist = Artist.all.sample
-    if rand_artist.name == song.artist.name
-      choose_random_artist(song)
-    else
-      rand_artist.name
-    end
+    Artist.where.not(name: song.artist.name).sample.name
   end
 
   def lyrics_to_array(song)
@@ -16,34 +11,29 @@ class Game < ActiveRecord::Base
   end
 
   def choose_lyrics_line(lyrics_array)
-    random_index = rand(lyrics_array.size - 1)
-    random_index -= 1 if random_index == lyrics_array.size - 1
+    random_index = rand(0..lyrics_array.size - 2)
     lyrics_array[random_index..(random_index + 1)]
   end
 
   def create_question_set(question_ct)
-    questions = []
-    question_ct.times { questions << generate_question }
-    questions
+    question_ct.times.collect {generate_question}
   end
 
   def generate_question
-    question = {
-      song_id: nil,
-      guessing_lyric: nil,
-      correct_answer: nil,
-      incorrect_answers: [],
-      display_answers: [],
-    }
-
     song = Song.all.sample
-    question[:song_id] = song[:id]
-    question[:guessing_lyric] = choose_lyrics_line(lyrics_to_array(song)).join("\n")
-    question[:correct_answer] = song.artist.name
-    3.times { question[:incorrect_answers] << choose_random_artist(song) }
-    question[:display_answers] = question[:incorrect_answers]
-    question[:display_answers] << question[:correct_answer]
-    question[:display_answers].shuffle!
+    song_id = song[:id]
+    guessing_lyric = choose_lyrics_line(lyrics_to_array(song)).join("\n")
+    correct_answer = song.artist.name
+    incorrect_answers = 3.times.collect {choose_random_artist(song)}
+    display_answers = (incorrect_answers + [correct_answer]).shuffle
+
+    question = {
+      song_id: song_id,
+      guessing_lyric: guessing_lyric,
+      correct_answer: correct_answer,
+      incorrect_answers: incorrect_answers,
+      display_answers: display_answers
+    }
 
     question
   end
