@@ -41,7 +41,9 @@ class Game < ActiveRecord::Base
   def ask_questions(question_ct)
     question_set = create_question_set(question_ct)
 
-    question_set.each do |question|
+    question_set.each_with_index do |question, index|
+      puts "Question #{index + 1} of #{question_set.length}"
+
       display_question(question)
 
       response = gets.chomp.to_i
