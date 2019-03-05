@@ -12,6 +12,8 @@ To get started playing, first clone this repository, bundle install dependencies
 git clone git@github.com:omfgtora/module-one-final-project-guidelines-seattle-web-career-012819.git
 cd mod-1-final-project
 bundle install
+rake db:migrate
+rake db:seed
 rake run
 ```
 

@@ -2,16 +2,17 @@ $longest_line = nil
 
 def welcome
   guess_from = generate_ascii("Guess  From")
-  $longest_line = $longest_line = guess_from.split("\n").max_by(&:size).size
+  $longest_line = guess_from.split("\n").max_by(&:size).size
   puts guess_from
   generate_ascii("Lyrics").split("\n").each { |line| puts line.center($longest_line) }
 end
 
 def menu
   puts "\n"
-  menu = ["New Game", "Leaderboard", "Player History"]
-  menu.each { |menu_item| puts "".ljust($longest_line / 3) + "#{menu.index(menu_item) + 1} - #{menu_item}".ljust($longest_line / 3) }
-  puts "".ljust($longest_line / 3) + "0 - Exit Game"
+  menu = {"New Game" => 1, "Leaderboard" => 2, "Player History" => 3, "Exit Game" => 0}
+  menu.each do |menu_item, index|
+    puts "#{"".ljust($longest_line / 3)}#{index} - #{menu_item.ljust($longest_line / 3)}"
+  end
   get_menu_input()
 end
 
@@ -76,6 +77,10 @@ def continue(current_player)
   end
 end
 
+def display_in_four_columns(width, one, two, three, four)
+  puts "#{one.ljust(width / 5)}#{two.ljust(width / 5)}#{three.ljust(width / 4)}#{four.ljust(width / 4)}"
+end
+
 def display_user_history
   puts "Whose history would you like to see?"
   user_name = gets.chomp
@@ -85,20 +90,25 @@ def display_user_history
   if display_user
     system("clear")
     generate_ascii(display_user.name).split("\n").each { |line| puts line.center(linewidth) }
-    puts "Game".ljust(linewidth / 5) + "Score".ljust(linewidth / 5) + "Correct Answers".ljust(linewidth / 4) + "Incorrect Answers".ljust(linewidth / 4)
+
+    display_in_four_columns(linewidth, "Game", "Score", "Correct Answers", "Incorrect Answers")
+
     puts "-" * linewidth
 
     display_user.games.each_with_index do |game, idx|
       score = game.game_records.sum(:points).to_s
-      correct_ct = game.game_records.group("points > 0").count[1].to_i.to_s
-      incorrect_ct = game.game_records.group("points > 0").count[0].to_i.to_s
-      puts "#{("Game " + (idx + 1).to_s).ljust(linewidth / 5)} #{score.ljust(linewidth / 5)} #{correct_ct.ljust(linewidth / 4)} #{incorrect_ct.ljust(linewidth / 4)}"
+      correct_ct = game.game_records.where("points > 0").count.to_s
+      incorrect_ct = game.game_records.where(points: 0).count.to_s
+      display_in_four_columns(linewidth, "Game #{idx + 1}", score, correct_ct, incorrect_ct)
     end
 
     puts "." * 80
+
     total_row = display_user.get_total_history
-    puts "#{("All Games").ljust(linewidth / 5)} #{total_row[:points].ljust(linewidth / 5)} #{total_row[:correct_ct].ljust(linewidth / 4)} #{total_row[:incorrect_ct].ljust(linewidth / 4)}"
+    display_in_four_columns(linewidth, "All Games", total_row[:points], total_row[:correct_ct], total_row[:incorrect_ct])
   else
     puts "That user wasn't found."
   end
+
+
 end
